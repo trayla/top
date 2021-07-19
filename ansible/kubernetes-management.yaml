@@ -1,0 +1,91 @@
+- hosts: master1
+  become: yes
+  vars_files:
+    - /opt/mgmt/values-top.yaml
+  tasks:
+
+    # Initialize the Kubernetes cluster
+
+    - name: Initialize the cluster
+      shell: kubeadm init --pod-network-cidr=192.168.0.0/16 >> cluster_initialized.txt
+      args:
+        chdir: $HOME
+        creates: cluster_initialized.txt
+
+    - name: Determine the cluster connection configuration
+      shell: cat /etc/kubernetes/admin.conf
+      register: kubernetes_connection_config
+
+    - name: Store the cluster connection configuration
+      set_fact:
+        kubernetes_connection_config: "{{ kubernetes_connection_config.stdout }}"
+
+- hosts: console
+  become: yes
+  vars_files:
+    - /opt/mgmt/values-top.yaml
+  tasks:
+
+    # Install kubectl
+
+    - name: Install GPG
+      apt:
+        name: gnupg
+        state: present
+
+    - name: Install APT Transport HTTPS
+      apt:
+        name: apt-transport-https
+        state: present
+
+    - name: Add Kubernetes apt-key
+      apt_key:
+        url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+        state: present
+
+    - name: Add Kubernetes APT repository
+      apt_repository:
+        repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
+        state: present
+        filename: 'kubernetes'
+
+    - name: Install kubectl
+      apt:
+        name: kubectl={{ platform.assets.kubernetes.version }}
+        state: present
+        force: yes
+
+    # Enable the Kubernetes connection
+
+    - name: Create the Kubernetes configuration directory
+      file:
+        path: /root/.kube
+        state: directory
+        mode: '0755'
+        owner: root
+        group: root
+
+    - name: Store the Kubernetes connection configuration
+      copy:
+        dest: /root/.kube/config
+        content: "{{ hostvars['master1'].kubernetes_connection_config }}"
+        owner: root
+        group: root
+
+    # Enable autocompletion support for the Kubernetes command line tools
+
+    - name: Configure Kubernetes shell autocompletion
+      become: yes
+      shell: kubectl completion bash > /etc/bash_completion.d/kubectl
+
+    # Install Stern for enhanced log display
+
+    - name: Install Stern
+      shell: |
+        wget https://github.com/wercker/stern/releases/download/{{ platform.assets.stern.version }}/stern_linux_amd64 -O /usr/bin/stern
+        chmod a+x /usr/bin/stern
+
+    # Taint the master node to allow custom workload
+
+    - name: Taint the master node to allow custom workload
+      shell: kubectl taint node master1.top.trayla.com node-role.kubernetes.io/master:NoSchedule-

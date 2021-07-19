@@ -1,0 +1,55 @@
+platform:
+
+  assets:
+    kubernetes:
+      version: 1.19.6-00
+    calico:
+      version: 3.15
+    istio:
+      version: 1.6.3
+    nginx:
+      version: 0.7.1
+    certmanager:
+      version: v1.1.0
+    grafana:
+      version: 5.2.1
+    longhorn:
+      version: v1.1.0
+    stern:
+      version: 1.11.0
+
+  # Your domain, the platform should be reachable through
+  domain: <<your.domain>>
+
+  # The default Email address to be used by the platform
+  email: <<your.email@your.domain>>
+
+  # The default administration user account
+  admin:
+    password: <<secretpassword>>
+
+  # The nodes
+  nodes:
+    console:
+      ip: <<console-ip>>
+    master1:
+      ip: <<master1-ip>>
+
+  # The storage settings
+  storage:
+    backup:
+      s3:
+        bucket: <<yours3bucket>>
+        region: <<yours3region>>
+        access_key_id: <<yours3accesskey>>
+        secret_access_key: <<yours3secretaccesskey>>
+        endpoints: <<yours3endpoints>>
+
+  certissuer:
+    default: production
+
+custom:
+
+  # Custom Kubernetes namespaces to be created upon installation
+  namespaces:
+  #  - name: myns
