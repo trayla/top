@@ -1,0 +1,35 @@
+- hosts: console
+  become: yes
+  vars_files:
+  - /opt/mgmt/values-top.yaml
+  tasks:
+
+  # Active strict ARP handling of the Kube Proxy
+
+  - name: Activate strict ARP handling of the Kube Proxy
+    shell: |
+      kubectl get configmap kube-proxy -n kube-system -o yaml | sed -e "s/strictARP: false/strictARP: true/" | kubectl apply -f - -n kube-system
+
+  # Install the MetalLB load balancer
+
+  - name: Install the MetalLB load balancer
+    shell: |
+      kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.10.2/manifests/namespace.yaml
+      kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.10.2/manifests/metallb.yaml
+
+  - name: Apply the load balancer configuration
+    shell: |
+      cat <<EOF | kubectl create -f -
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        namespace: metallb-system
+        name: config
+      data:
+        config: |
+          address-pools:
+          - name: default
+            protocol: layer2
+            addresses:
+            - 144.91.76.184-144.91.76.184
+      EOF

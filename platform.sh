@@ -65,6 +65,10 @@ elif [ "$ACTION" == "install" ]; then
   write_title "Executing ansible/kubernetes-monitoring.yaml"
   ansible-playbook -i $BASEDIR/python/get-ansible-inventory.py $BASEDIR/ansible/kubernetes-monitoring.yaml
 
+  # Install the load balancer implementation
+  write_title "Executing ansible/kubernetes-loadbalancer.yaml"
+  ansible-playbook -i $BASEDIR/python/get-ansible-inventory.py $BASEDIR/ansible/kubernetes-loadbalancer.yaml
+
   # Install the Ingress implementation
   write_title "Executing ansible/kubernetes-ingress.yaml"
   ansible-playbook -i $BASEDIR/python/get-ansible-inventory.py $BASEDIR/ansible/kubernetes-ingress.yaml
