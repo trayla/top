@@ -14,10 +14,6 @@
         --namespace top \
         --version {{ platform.assets.prometheus.version }} \
         --values /opt/mgmt/top/kubernetes/monitoring/values.yaml \
-        --set prometheus.ingress.hosts[0]=prometheus.top.{{ platform.domain }} \
-        --set prometheus.ingress.tls[0].hosts[0]=prometheus.top.{{ platform.domain }} \
-        --set alertmanager.ingress.hosts[0]=alertmanager.top.{{ platform.domain }} \
-        --set alertmanager.ingress.tls[0].hosts[0]=alertmanager.top.{{ platform.domain }} \
         --set grafana.ingress.hosts[0]=grafana.top.{{ platform.domain }} \
         --set grafana.ingress.tls[0].hosts[0]=grafana.top.{{ platform.domain }} \
-        --set grafana.ingress.adminPassword={{ platform.admin.password }}
+        --set grafana.adminPassword={{ platform.admin.password }}

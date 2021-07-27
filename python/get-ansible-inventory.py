@@ -6,19 +6,21 @@ import argparse
 import yaml
 import simplejson
 
-platform_nodes_console = ''
+platform_domain = ''
+platform_console = ''
+platform_nodes = ''
+platform_nodes_masters = ''
+platform_nodes_workers = ''
 with open("/opt/mgmt/values-top.yaml", 'r') as stream:
   try:
-    platform_nodes_console = yaml.safe_load(stream).get("platform").get("nodes").get("console").get("ip")
+    platform = yaml.safe_load(stream).get("platform")
+    platform_domain = platform.get("domain")
+    platform_console = platform.get("console")
+    platform_nodes = platform.get("nodes")
+    platform_nodes_masters = platform_nodes.get("masters")
+    platform_nodes_workers = platform_nodes.get("workers")
   except yaml.YAMLError as exc:
-    platform_nodes_console = ''
-
-platform_nodes_master1 = ''
-with open("/opt/mgmt/values-top.yaml", 'r') as stream:
-  try:
-    platform_nodes_master1 = yaml.safe_load(stream).get("platform").get("nodes").get("master1").get("ip")
-  except yaml.YAMLError as exc:
-    platform_nodes_master1 = ''
+    platform_console = ''
 
 class Inventory(object):
 
@@ -41,31 +43,56 @@ class Inventory(object):
 
   # Example inventory for testing
   def get_inventory(self):
+    masters = []
+    workers = []
+    jsHostvars = {}
+
+    jsHostvars['console'] = {
+      'ansible_host': platform_console.get("ip"),
+      'ansible_fqcn': "console." + platform_domain,
+      'ansible_user': 'root',
+      'ansible_ssh_common_args': '-o StrictHostKeyChecking=no'
+    }
+
+    count = 1
+    for node in platform_nodes_masters:
+      nodeName = 'master' + "{:02d}".format(count)
+      jsHostvars[nodeName] = {
+        'ansible_host': node.get("ip"),
+        'ansible_fqcn': nodeName + "." + platform_domain,
+        'ansible_user': 'root',
+        'ansible_ssh_common_args': '-o StrictHostKeyChecking=no'
+      }
+      masters.append(nodeName)
+      count = count + 1
+
+    count = 1
+    if platform_nodes_workers != None:
+      for node in platform_nodes_workers:
+        nodeName = 'worker' + "{:02d}".format(count)
+        jsHostvars[nodeName] = {
+          'ansible_host': node.get("ip"),
+          'ansible_fqcn': nodeName + "." + platform_domain,
+          'ansible_user': 'root',
+          'ansible_ssh_common_args': '-o StrictHostKeyChecking=no'
+        }
+        workers.append(nodeName)
+        count = count + 1
+
     return {
       'all': {
         'hosts': [ 'console' ],
         'children': [ 'kubernetes' ]
       },
       'kubernetes': {
-        'hosts': [ 'master1' ],
+        'hosts': masters,
         'children': [ 'workers' ]
       },
       'workers': {
-        'hosts': [ ]
+        'hosts': workers
       },
       '_meta': {
-        'hostvars': {
-          'console': {
-            'ansible_host': platform_nodes_console,
-            'ansible_user': 'root',
-            'ansible_ssh_common_args': '-o StrictHostKeyChecking=no'
-          },
-          'master1': {
-            'ansible_host': platform_nodes_master1,
-            'ansible_user': 'root',
-            'ansible_ssh_common_args': '-o StrictHostKeyChecking=no'
-          }
-        }
+        'hostvars': jsHostvars
       }
     }
 

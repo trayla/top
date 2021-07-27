@@ -21,7 +21,7 @@
       nginx_port_http: "{{ nginx_port_http.stdout }}"
       nginx_port_https: "{{ nginx_port_https.stdout }}"
 
-- hosts: master1
+- hosts: master01
   become: yes
   vars_files:
   - /opt/mgmt/values-top.yaml

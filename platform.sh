@@ -32,6 +32,9 @@ if [ "$ACTION" == "prepare" ]; then
   # Install Ansible
   apt install ansible apache2-utils -y
 
+  # Install the Ansible community collection
+  ansible-galaxy collection install community.general
+
 elif [ "$ACTION" == "install" ]; then
   # Add the nodes to the hosts file of each virtual machine
   write_title "Executing ansible/hosts.yaml"

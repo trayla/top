@@ -28,12 +28,16 @@ platform:
   admin:
     password: <<secretpassword>>
 
-  # The nodes
+  # The console
+  console:
+    ip: <<ip>>
+
+  # The platform nodes
   nodes:
-    console:
-      ip: <<console-ip>>
-    master1:
-      ip: <<master1-ip>>
+    masters:
+    - ip: <<ip>>
+    workers:
+    - ip: <<ip>>
 
   # The storage settings
   storage:
@@ -46,7 +50,8 @@ platform:
         endpoints: <<yours3endpoints>>
 
   certissuer:
-    default: production
+    # production or staging
+    default: staging
 
 custom:
 

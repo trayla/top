@@ -4,6 +4,39 @@
     - /opt/mgmt/values-top.yaml
   tasks:
 
+  - name: Set the hostname of all Kubernetes nodes
+    ansible.builtin.hostname:
+      name: "{{ hostvars[inventory_hostname].ansible_fqcn }}"
+
+  # Define firewall rules to protect the node
+
+  - name: Allow SSH access on the node
+    community.general.ufw:
+      rule: allow
+      name: OpenSSH
+
+  - name: Apply firewall rules on the node
+    community.general.ufw:
+      rule: allow
+      port: '{{ item }}'
+    loop:
+    - '179'
+    - '4789'
+    - '5473'
+    - '443'
+    - '6443'
+    - '2379'
+    - '4149'
+    - '10250'
+    - '10255'
+    - '10256'
+    - '9099'
+
+  - name: Enable the firewall
+    community.general.ufw:
+      state: enabled
+      policy: deny
+
   # Prepare all Kubernetes nodes for installation
 
   - name: Install GPG
