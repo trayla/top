@@ -42,11 +42,11 @@ elif [ "$ACTION" == "install" ]; then
 
   # Install Docker on each virtual machine
   write_title "Executing ansible/docker.yaml"
-  ansible-playbook -i $BASEDIR/python/get-ansible-inventory.py $BASEDIR/ansible/docker.yaml
+  ansible-playbook -i $BASEDIR/python/get-ansible-inventory.py $BASEDIR/ansible/docker.yaml -e allhosts=true
 
   # Prepare all Kubernetes nodes with a basic installation
   write_title "Executing ansible/kubernetes-prepare.yaml"
-  ansible-playbook -i $BASEDIR/python/get-ansible-inventory.py $BASEDIR/ansible/kubernetes-prepare.yaml
+  ansible-playbook -i $BASEDIR/python/get-ansible-inventory.py $BASEDIR/ansible/kubernetes-prepare.yaml -e allhosts=true
 
   # Install the Kubernetes management
   write_title "Executing ansible/kubernetes-management.yaml"
@@ -54,7 +54,7 @@ elif [ "$ACTION" == "install" ]; then
 
   # Install the worker nodes
   write_title "Executing ansible/kubernetes-nodes.yaml"
-  ansible-playbook -i $BASEDIR/python/get-ansible-inventory.py $BASEDIR/ansible/kubernetes-nodes.yaml
+  ansible-playbook -i $BASEDIR/python/get-ansible-inventory.py $BASEDIR/ansible/kubernetes-nodes.yaml -e allhosts=true
 
   # Install the base components
   write_title "Executing ansible/kubernetes-base.yaml"
@@ -84,10 +84,30 @@ elif [ "$ACTION" == "install" ]; then
   write_title "Executing ansible/kubernetes-customns.yaml"
   ansible-playbook -i $BASEDIR/python/get-ansible-inventory.py $BASEDIR/ansible/kubernetes-customns.yaml
 
+elif [ "$ACTION" == "addworker" ]; then
+  NODE=$2
+
+  # Add the nodes to the hosts file of each virtual machine
+  write_title "Executing ansible/hosts.yaml"
+  ansible-playbook -i $BASEDIR/python/get-ansible-inventory.py $BASEDIR/ansible/hosts.yaml
+
+  # Install Docker on each virtual machine
+  write_title "Executing ansible/docker.yaml"
+  ansible-playbook -i $BASEDIR/python/get-ansible-inventory.py $BASEDIR/ansible/docker.yaml -e allhosts=false -e host=${NODE}
+
+  # Prepare all Kubernetes nodes with a basic installation
+  write_title "Executing ansible/kubernetes-prepare.yaml"
+  ansible-playbook -i $BASEDIR/python/get-ansible-inventory.py $BASEDIR/ansible/kubernetes-prepare.yaml -e allhosts=false -e host=${NODE}
+
+  # Install the worker nodes
+  write_title "Executing ansible/kubernetes-nodes.yaml"
+  ansible-playbook -i $BASEDIR/python/get-ansible-inventory.py $BASEDIR/ansible/kubernetes-nodes.yaml -e allhosts=false -e host=${NODE}
+
 else
   echo "Deploys a Kubernetes cluster"
   echo "Usage:"
   echo "  platform.sh prepare"
   echo "  platform.sh install"
+  echo "  platform.sh addworker <name_of_worker_node>"
 
 fi

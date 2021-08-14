@@ -13,6 +13,31 @@
     set_fact:
       join_command: "{{ join_command_raw.stdout_lines[0] }}"
 
+# Install Longhorn requirements on each data node
+- hosts: kubernetes
+  become: yes
+  vars_files:
+  - /opt/mgmt/values-top.yaml
+  tasks:
+
+  - name: Create the longhorn data directory
+    file:
+      path: /var/lib/longhorn
+      state: directory
+    when: allhosts == 'true' or inventory_hostname == host
+
+  - name: Install iSCSI packages for Longhorn
+    apt:
+      name: open-iscsi
+      state: present
+    when: allhosts == 'true' or inventory_hostname == host
+
+  - name: Install NFS tools for Longhorn
+    apt:
+      name: nfs-common
+      state: present
+    when: allhosts == 'true' or inventory_hostname == host
+
 - hosts: workers
   become: yes
   vars_files:
@@ -24,6 +49,7 @@
     args:
       chdir: $HOME
       creates: node_joined.txt
+    when: allhosts == 'true' or inventory_hostname == host
 
   - name: Add host entries of all nodes on each Kubernetes node
     lineinfile:
@@ -31,5 +57,5 @@
       regexp: '.*{{ item }}$'
       line: "{{ hostvars[item].ansible_host }} {{item}}"
       state: present
-    when: hostvars[item].ansible_host is defined
+    when: hostvars[item].ansible_host is defined and allhosts == 'true' or inventory_hostname == host
     with_items: "{{ groups.workers }}"

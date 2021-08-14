@@ -1,25 +1,27 @@
 - hosts: all
   become: yes
   vars_files:
-    - /opt/mgmt/values-top.yaml
+  - /opt/mgmt/values-top.yaml
   tasks:
 
-    # Disable Swap files because these are not supported on Docker hosts
+  # Disable Swap files because these are not supported on Docker hosts
 
-    - name: Remove swapfile from /etc/fstab
-      mount:
-        path: none
-        fstype: swap
-        state: absent
+  - name: Remove swapfile from /etc/fstab
+    mount:
+      path: none
+      fstype: swap
+      state: absent
+    when: allhosts == 'true' or inventory_hostname == host
 
-    - name: Disable swap
-      command: swapoff -a
-      when: ansible_swaptotal_mb > 0
+  - name: Disable swap
+    command: swapoff -a
+    when: ansible_swaptotal_mb > 0 and allhosts == 'true' or inventory_hostname == host
 
-    # Install Docker
+  # Install Docker
 
-    - name: Install Docker
-      apt:
-        name: docker.io
-        state: present
-        update_cache: true
+  - name: Install Docker
+    apt:
+      name: docker.io
+      state: present
+      update_cache: true
+    when: allhosts == 'true' or inventory_hostname == host
