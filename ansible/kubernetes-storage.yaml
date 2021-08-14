@@ -53,10 +53,10 @@
       spec:
         tls:
         - hosts:
-          - longhorn.top.{{ platform.domain }}
+          - longhorn.{{ platform.name }}.{{ platform.domain }}
           secretName: longhorn-tls
         rules:
-        - host: longhorn.top.{{ platform.domain }}
+        - host: longhorn.{{ platform.name }}.{{ platform.domain }}
           http:
             paths:
             - path: /

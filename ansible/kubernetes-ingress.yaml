@@ -154,10 +154,10 @@
       spec:
         tls:
         - hosts:
-          - echo.top.{{ platform.domain }}
+          - echo.{{ platform.name }}.{{ platform.domain }}
           secretName: echo-tls
         rules:
-        - host: echo.top.{{ platform.domain }}
+        - host: echo.{{ platform.name }}.{{ platform.domain }}
           http:
             paths:
             - path: /

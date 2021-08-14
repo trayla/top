@@ -7,6 +7,7 @@ import yaml
 import simplejson
 
 platform_domain = ''
+platform_name = ''
 platform_console = ''
 platform_nodes = ''
 platform_nodes_masters = ''
@@ -15,6 +16,7 @@ with open("/opt/mgmt/values-top.yaml", 'r') as stream:
   try:
     platform = yaml.safe_load(stream).get("platform")
     platform_domain = platform.get("domain")
+    platform_name = platform.get("name")
     platform_console = platform.get("console")
     platform_nodes = platform.get("nodes")
     platform_nodes_masters = platform_nodes.get("masters")
@@ -49,7 +51,7 @@ class Inventory(object):
 
     jsHostvars['console'] = {
       'ansible_host': platform_console.get("ip"),
-      'ansible_fqcn': "console." + platform_domain,
+      'ansible_fqcn': "console." + platform_name + "." + platform_domain,
       'ansible_user': 'root',
       'ansible_ssh_common_args': '-o StrictHostKeyChecking=no'
     }
@@ -59,7 +61,7 @@ class Inventory(object):
       nodeName = 'master' + "{:02d}".format(count)
       jsHostvars[nodeName] = {
         'ansible_host': node.get("ip"),
-        'ansible_fqcn': nodeName + "." + platform_domain,
+        'ansible_fqcn': nodeName + "." + platform_name + "." + platform_domain,
         'ansible_user': 'root',
         'ansible_ssh_common_args': '-o StrictHostKeyChecking=no'
       }
@@ -72,7 +74,7 @@ class Inventory(object):
         nodeName = 'worker' + "{:02d}".format(count)
         jsHostvars[nodeName] = {
           'ansible_host': node.get("ip"),
-          'ansible_fqcn': nodeName + "." + platform_domain,
+          'ansible_fqcn': nodeName + "." + platform_name + "." + platform_domain,
           'ansible_user': 'root',
           'ansible_ssh_common_args': '-o StrictHostKeyChecking=no'
         }

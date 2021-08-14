@@ -1,0 +1,17 @@
+- hosts: kubernetes
+  become: yes
+  vars_files:
+  - /opt/mgmt/values-top.yaml
+  tasks:
+
+  - name: Show machine metrics
+    shell: |
+      echo "CPU model: `lscpu | sed -n 's/Model name:[ \t]*//p'`"
+      echo "CPU cores: `lscpu | sed -n 's/CPU(s):[ \t]*//p'`"
+      echo "CPU MHz: `lscpu | sed -n 's/CPU MHz:[ \t]*//p'`"
+      echo "Memory Total: `cat /proc/meminfo | sed -n 's/MemTotal:[ \t]*//p'`"
+      echo "Memory Free: `cat /proc/meminfo | sed -n 's/MemFree:[ \t]*//p'`"
+    register: output
+
+  - debug:
+      var: output.stdout_lines

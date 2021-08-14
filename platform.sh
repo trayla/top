@@ -76,10 +76,6 @@ elif [ "$ACTION" == "install" ]; then
   write_title "Executing ansible/kubernetes-ingress.yaml"
   ansible-playbook -i $BASEDIR/python/get-ansible-inventory.py $BASEDIR/ansible/kubernetes-ingress.yaml
 
-  # Create port forwarding rules into the Kubernetes cluster
-  write_title "Executing ansible/kubernetes-firewall.yaml"
-  ansible-playbook -i $BASEDIR/python/get-ansible-inventory.py $BASEDIR/ansible/kubernetes-firewall.yaml
-
   # Install the Docker Registry
   write_title "Executing ansible/kubernetes-dockerreg.yaml"
   ansible-playbook -i $BASEDIR/python/get-ansible-inventory.py $BASEDIR/ansible/kubernetes-dockerreg.yaml

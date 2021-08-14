@@ -14,6 +14,6 @@
         --namespace top \
         --version {{ platform.assets.prometheus.version }} \
         --values /opt/mgmt/top/kubernetes/monitoring/values.yaml \
-        --set grafana.ingress.hosts[0]=grafana.top.{{ platform.domain }} \
-        --set grafana.ingress.tls[0].hosts[0]=grafana.top.{{ platform.domain }} \
+        --set grafana.ingress.hosts[0]=grafana.{{ platform.name }}.{{ platform.domain }} \
+        --set grafana.ingress.tls[0].hosts[0]=grafana.{{ platform.name }}.{{ platform.domain }} \
         --set grafana.adminPassword={{ platform.admin.password }}

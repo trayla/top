@@ -97,10 +97,10 @@
       spec:
         tls:
         - hosts:
-          - dockerreg.top.{{ platform.domain }}
+          - dockerreg.{{ platform.name }}.{{ platform.domain }}
           secretName: dockerreg-tls
         rules:
-        - host: dockerreg.top.{{ platform.domain }}
+        - host: dockerreg.{{ platform.name }}.{{ platform.domain }}
           http:
             paths:
             - path: /
@@ -113,4 +113,4 @@
       EOF
 
   - name: Create the Docker Registry pull secret inside the top namespace
-    shell: "kubectl create -n top secret docker-registry dockerreg-pull --docker-server=dockerreg.top.{{ platform.domain }} --docker-username=admin --docker-password={{ platform.admin.password }} --docker-email={{ platform.email }}"
+    shell: "kubectl create -n top secret docker-registry dockerreg-pull --docker-server=dockerreg.{{ platform.name }}.{{ platform.domain }} --docker-username=admin --docker-password={{ platform.admin.password }} --docker-email={{ platform.email }}"

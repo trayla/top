@@ -21,6 +21,9 @@ platform:
   # Your domain, the platform should be reachable through
   domain: <<your.domain>>
 
+  # The name of the TOP instance
+  name: top1
+
   # The default Email address to be used by the platform
   email: <<your.email@your.domain>>
 
