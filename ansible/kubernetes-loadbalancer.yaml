@@ -31,5 +31,5 @@
           - name: default
             protocol: layer2
             addresses:
-            - 144.91.76.184-144.91.76.184
+            - 10.88.10.31-10.88.10.31
       EOF
