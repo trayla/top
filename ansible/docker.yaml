@@ -15,7 +15,6 @@
 
   - name: Disable swap
     command: swapoff -a
-    when: ansible_swaptotal_mb > 0 and allhosts == 'true' or inventory_hostname == host
 
   # Install Docker
 
@@ -25,3 +24,14 @@
       state: present
       update_cache: true
     when: allhosts == 'true' or inventory_hostname == host
+
+  # Change the Docker driver to SystemD
+
+  - name: change the Docker driver to SystemD
+    shell: |
+      cat <<EOF > /etc/docker/daemon.json
+      {
+        "exec-opts": ["native.cgroupdriver=systemd"]
+      }
+      EOF
+      systemctl daemon-reload && systemctl restart docker

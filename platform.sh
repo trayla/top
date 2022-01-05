@@ -34,6 +34,7 @@ if [ "$ACTION" == "prepare" ]; then
 
   # Install the Ansible community collection
   ansible-galaxy collection install community.general
+  ansible-galaxy collection install ansible.posix
 
 elif [ "$ACTION" == "install" ]; then
   # Add the nodes to the hosts file of each virtual machine

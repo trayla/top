@@ -2,20 +2,31 @@ platform:
 
   assets:
     kubernetes:
-      version: 1.19.6-00
+      # apt-cache madison kubeadm | head -n 1
+      version: 1.23.1-00
     calico:
-      version: 3.15
+      # https://projectcalico.docs.tigera.io/release-notes/
+      version: 3.21
     istio:
-      version: 1.6.3
+      # https://istio.io/latest/docs/releases/supported-releases/
+      version: 1.12
     nginx:
-      version: 0.7.1
+      # helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx && helm repo update && helm search repo ingress-nginx/ingress-nginx --v>
+      version: 4.0.13
     certmanager:
-      version: v1.1.0
-    grafana:
-      version: 5.2.1
+      # https://cert-manager.io/docs/release-notes/
+      version: 1.6.1
+    prometheus:
+      # https://github.com/prometheus-community/helm-charts/releases
+      version: 27.2.0
     longhorn:
-      version: v1.1.0
+      # https://github.com/longhorn/longhorn/releases
+      version: 1.2.3
+    metallb:
+      # https://metallb.universe.tf/release-notes/
+      version: 0.11.0
     stern:
+      # https://github.com/wercker/stern/releases
       version: 1.11.0
 
   # Your domain, the platform should be reachable through

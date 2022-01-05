@@ -14,8 +14,8 @@
 
   - name: Install the MetalLB load balancer
     shell: |
-      kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.10.2/manifests/namespace.yaml
-      kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.10.2/manifests/metallb.yaml
+      kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v{{ platform.assets.metallb.version }}/manifests/namespace.yaml
+      kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v{{ platform.assets.metallb.version }}/manifests/metallb.yaml
 
   - name: Apply the load balancer configuration
     shell: |
@@ -31,5 +31,5 @@
           - name: default
             protocol: layer2
             addresses:
-            - 10.88.10.31-10.88.10.31
+            - {{ platform.nodes.masters[0].ip }}/32
       EOF

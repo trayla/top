@@ -37,6 +37,21 @@
       state: enabled
       policy: deny
 
+  # Enable IP forwarding
+
+  - name: Enable IP forwarding
+    ansible.posix.sysctl:
+      name: net.ipv4.ip_forward
+      value: '1'
+      sysctl_set: yes
+      state: present
+      reload: yes
+
+  # Ensure the existance of the netfilter bridging module
+
+  - name: Ensure the existance of the netfilter bridging module
+    shell: modprobe br_netfilter
+
   # Prepare all Kubernetes nodes for installation
 
   - name: Install GPG
@@ -72,3 +87,4 @@
     apt:
       name: kubeadm={{ platform.assets.kubernetes.version }}
       state: present
+
