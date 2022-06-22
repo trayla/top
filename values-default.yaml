@@ -3,65 +3,88 @@ platform:
   assets:
     kubernetes:
       # apt-cache madison kubeadm | head -n 1
-      version: 1.23.1-00
+      version: 1.24.2-00
     calico:
       # https://projectcalico.docs.tigera.io/release-notes/
-      version: 3.21
+      version: 3.23
     istio:
       # https://istio.io/latest/docs/releases/supported-releases/
-      version: 1.12
+      version: 1.14
     nginx:
-      # helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx && helm repo update && helm search repo ingress-nginx/ingress-nginx --v>
-      version: 4.0.13
+      # helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx && helm repo update && helm search repo ingress-nginx/ingress-nginx --versions | head -n 2
+      version: 4.1.4
     certmanager:
       # https://cert-manager.io/docs/release-notes/
-      version: 1.6.1
+      version: 1.8.0
     prometheus:
       # https://github.com/prometheus-community/helm-charts/releases
-      version: 27.2.0
+      version: 36.0.2
     longhorn:
       # https://github.com/longhorn/longhorn/releases
-      version: 1.2.3
+      version: 1.3.0
     metallb:
       # https://metallb.universe.tf/release-notes/
-      version: 0.11.0
+      version: 0.12.1
     stern:
       # https://github.com/wercker/stern/releases
       version: 1.11.0
 
   # Your domain, the platform should be reachable through
-  domain: <<your.domain>>
+  domain: <domain-name>
 
   # The name of the TOP instance
-  name: top1
+  name: <instance-name>
 
   # The default Email address to be used by the platform
-  email: <<your.email@your.domain>>
+  email: <email>
 
   # The default administration user account
   admin:
-    password: <<secretpassword>>
+    password: <password>
+
+  # Some settings for kubeadm which is called on the initial control plane node
+  controlplane:
+    bindip: <bindip>
 
   # The console
   console:
-    ip: <<ip>>
+    ip: <ip-address>
 
   # The platform nodes
   nodes:
-    masters:
-    - ip: <<ip>>
+    controlplanes:
+      controlplane01:
+        hostname: controlplane01
+        ip:
+          ext: <external-ip-address>
+          int: <internal-ip-address>
+        interfaces:
+          int: <network-interface>
     workers:
-    - ip: <<ip>>
+      worker01:
+        hostname: worker01
+        ip:
+          ext: <external-ip-address>
+          int: <internal-ip-address>
+        interfaces:
+          int: <network-interface>
+      worker02:
+        hostname: worker02
+        ip:
+          ext: <external-ip-address>
+          int: <internal-ip-address>
+        interfaces:
+          int: <network-interface>
 
   # The storage settings
   storage:
     backup:
       s3:
-        bucket: <<yours3bucket>>
-        region: <<yours3region>>
-        access_key_id: <<yours3accesskey>>
-        secret_access_key: <<yours3secretaccesskey>>
-        endpoints: <<yours3endpoints>>
+        bucket: <bucket>
+        region: <region>
+        access_key_id: <access-key>
+        secret_access_key: <secret-key>
+        endpoints: <endpoint-url>
 
   certissuer:
     # production or staging
@@ -71,4 +94,4 @@ custom:
 
   # Custom Kubernetes namespaces to be created upon installation
   namespaces:
-  #  - name: myns
+  # - name: <namespace-name>

@@ -1,14 +1,21 @@
-- hosts: all
+- hosts: kubernetes
   become: yes
   vars_files:
     - /opt/mgmt/values-top.yaml
   tasks:
 
-  - name: Add IP address of all hosts to all hosts
+  - name: Add IP address of all control plane nodes to each Kubernetes node
     lineinfile:
       dest: /etc/hosts
       regexp: '.*{{ item }}$'
-      line: "{{ hostvars[item].ansible_host }} {{item}}"
+      line: "{{ item.ip.int }} {{ item.hostname }}"
       state: present
-    when: hostvars[item].ansible_host is defined
-    with_items: "{{ groups.all }}"
+    loop: "{{ platform.nodes.controlplanes.values() | list }}"
+
+  - name: Add IP address of all worker nodes to each Kubernetes node
+    lineinfile:
+      dest: /etc/hosts
+      regexp: '.*{{ item }}$'
+      line: "{{ item.ip.int }} {{ item.hostname }}"
+      state: present
+    loop: "{{ platform.nodes.workers.values() | list }}"

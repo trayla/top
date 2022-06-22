@@ -10,7 +10,7 @@ platform_domain = ''
 platform_name = ''
 platform_console = ''
 platform_nodes = ''
-platform_nodes_masters = ''
+platform_nodes_controlplanes = ''
 platform_nodes_workers = ''
 with open("/opt/mgmt/values-top.yaml", 'r') as stream:
   try:
@@ -19,7 +19,7 @@ with open("/opt/mgmt/values-top.yaml", 'r') as stream:
     platform_name = platform.get("name")
     platform_console = platform.get("console")
     platform_nodes = platform.get("nodes")
-    platform_nodes_masters = platform_nodes.get("masters")
+    platform_nodes_controlplanes = platform_nodes.get("controlplanes")
     platform_nodes_workers = platform_nodes.get("workers")
   except yaml.YAMLError as exc:
     platform_console = ''
@@ -45,7 +45,7 @@ class Inventory(object):
 
   # Example inventory for testing
   def get_inventory(self):
-    masters = []
+    controlplanes = []
     workers = []
     jsHostvars = {}
 
@@ -57,23 +57,21 @@ class Inventory(object):
     }
 
     count = 1
-    for node in platform_nodes_masters:
-      nodeName = 'master' + "{:02d}".format(count)
+    for nodeName in platform_nodes_controlplanes.keys():
       jsHostvars[nodeName] = {
-        'ansible_host': node.get("ip"),
+        'ansible_host': platform_nodes_controlplanes[nodeName].get("ip").get("ext"),
         'ansible_fqcn': nodeName + "." + platform_name + "." + platform_domain,
         'ansible_user': 'root',
         'ansible_ssh_common_args': '-o StrictHostKeyChecking=no'
       }
-      masters.append(nodeName)
+      controlplanes.append(nodeName)
       count = count + 1
 
     count = 1
     if platform_nodes_workers != None:
-      for node in platform_nodes_workers:
-        nodeName = 'worker' + "{:02d}".format(count)
+      for nodeName in platform_nodes_workers.keys():
         jsHostvars[nodeName] = {
-          'ansible_host': node.get("ip"),
+          'ansible_host': platform_nodes_workers[nodeName].get("ip").get("ext"),
           'ansible_fqcn': nodeName + "." + platform_name + "." + platform_domain,
           'ansible_user': 'root',
           'ansible_ssh_common_args': '-o StrictHostKeyChecking=no'
@@ -87,7 +85,7 @@ class Inventory(object):
         'children': [ 'kubernetes' ]
       },
       'kubernetes': {
-        'hosts': masters,
+        'hosts': controlplanes,
         'children': [ 'workers' ]
       },
       'workers': {

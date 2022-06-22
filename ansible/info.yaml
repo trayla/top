@@ -1,0 +1,21 @@
+- hosts: kubernetes
+  become: yes
+  vars_files:
+    - /opt/mgmt/values-top.yaml
+  tasks:
+
+  - name: Show the memory of each host
+    shell: |
+      free -h
+    register: results
+
+  - ansible.builtin.debug:
+      msg: "{{ results.stdout_lines }}"
+
+  - name: Show the block devices of each host
+    shell: |
+      df -h | grep /dev/sd
+    register: results
+
+  - ansible.builtin.debug:
+      msg: "{{ results.stdout_lines }}"

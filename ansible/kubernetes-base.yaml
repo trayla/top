@@ -6,7 +6,7 @@
 
     # Install the Canel SDN
 
-    - name: Install pod network
+    - name: Install Calico SDN
       become: yes
       shell: "kubectl apply -f https://docs.projectcalico.org/v{{ platform.assets.calico.version }}/manifests/calico.yaml"
       args:

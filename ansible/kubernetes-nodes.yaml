@@ -1,4 +1,4 @@
-- hosts: master01
+- hosts: controlplane01
   become: yes
   gather_facts: false
   vars_files:
@@ -45,17 +45,24 @@
   tasks:
 
   - name: Join the nodes to the cluster
-    shell: "{{ hostvars['master01'].join_command }} >> node_joined.txt"
+    shell: "{{ hostvars['controlplane01'].join_command }} >> node_joined.txt"
     args:
       chdir: $HOME
       creates: node_joined.txt
     when: allhosts == 'true' or inventory_hostname == host
 
-  - name: Add host entries of all nodes on each Kubernetes node
+  - name: Add IP address of all control plane nodes to each Kubernetes node
     lineinfile:
       dest: /etc/hosts
       regexp: '.*{{ item }}$'
-      line: "{{ hostvars[item].ansible_host }} {{item}}"
+      line: "{{ item.ip.int }} {{ item.hostname }}"
       state: present
-    when: hostvars[item].ansible_host is defined and allhosts == 'true' or inventory_hostname == host
-    with_items: "{{ groups.workers }}"
+    loop: "{{ platform.nodes.controlplanes.values() | list }}"
+
+  - name: Add IP address of all worker nodes to each Kubernetes node
+    lineinfile:
+      dest: /etc/hosts
+      regexp: '.*{{ item }}$'
+      line: "{{ item.ip.int }} {{ item.hostname }}"
+      state: present
+    loop: "{{ platform.nodes.workers.values() | list }}"

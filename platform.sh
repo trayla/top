@@ -24,13 +24,14 @@ fi
 
 if [ "$ACTION" == "prepare" ]; then
    # Install aptitude which is necessary for Ansible
-  apt install aptitude python3-pip -y
+  apt install aptitude python3-pip software-properties-common -y
 
   # Install Python packages
   pip install pyyaml
 
   # Install Ansible
-  apt install ansible apache2-utils -y
+  add-apt-repository ppa:ansible/ansible && apt update
+  apt install ansible-core apache2-utils -y
 
   # Install the Ansible community collection
   ansible-galaxy collection install community.general
