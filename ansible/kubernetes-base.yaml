@@ -4,19 +4,20 @@
     - /opt/mgmt/values-top.yaml
   tasks:
 
-    # Install the Canel SDN
+    # Install the Calico SDN alongside the command line interface
 
     - name: Install Calico SDN
       become: yes
-      shell: "kubectl apply -f https://docs.projectcalico.org/v{{ platform.assets.calico.version }}/manifests/calico.yaml"
+      shell: |
+        kubectl create -f https://projectcalico.docs.tigera.io/archive/v{{ platform.assets.calico.version }}/manifests/tigera-operator.yaml
+        kubectl create -f https://projectcalico.docs.tigera.io/archive/v{{ platform.assets.calico.version }}/manifests/custom-resources.yaml
       args:
         chdir: $HOME
         creates: pod_network_setup.txt
 
-    # Install the Calico command line interface (calicoctl)
-
     - name: Install the Calico command line interface
-      shell: "kubectl apply -f https://docs.projectcalico.org/v{{ platform.assets.calico.version }}/manifests/calicoctl.yaml"
+      shell: |
+        kubectl create -f https://projectcalico.docs.tigera.io/archive/v{{ platform.assets.calico.version }}/manifests/calicoctl.yaml
 
     - name: Define a shell alias for calicoctl for root
       lineinfile:
@@ -28,40 +29,11 @@
         insertafter=EOF
         create=True
 
-#    - name: Waiting for Calico to come up
-#      shell: kubectl exec -i -n kube-system calicoctl /calicoctl -- get felixconfiguration default --export -o yaml
-#      register: calicoctl_output
-#      until: calicoctl_output.stdout.find("FelixConfiguration") != -1
-#      retries: 300
-#      delay: 10
+    - name: Sleep some time and hope Calico has come up
+      ansible.builtin.wait_for:
+        timeout: 120
 
-#    - name: Enabling application layer policy
-#      shell: |
-#        kubectl exec -i -n kube-system calicoctl /calicoctl -- get felixconfiguration default --export -o yaml | sed -e '/  policySyncPathPrefix:/d' \-e '$ a\  policySyncPathPrefix: /var/run/nodeagent' > felix-config.yaml
-#        kubectl exec -i -n kube-system calicoctl /calicoctl -- apply -f - < felix-config.yaml
-#      args:
-#        executable: /bin/bash
-#        chdir: $HOME
-
-    # Install Istio
-
-#    - name: Install Istio
-#      shell: |
-#        curl -L https://git.io/getLatestIstio | ISTIO_VERSION={{ platform.assets.istio.version }} sh -
-#        cd $(ls -d istio-*)
-#        kubectl apply -f install/kubernetes/helm/istio-init/files/
-#        kubectl apply -f install/kubernetes/istio-demo-auth.yaml
-#      args:
-#        executable: /bin/bash
-#        chdir: $HOME
-
-#    - name: Updating the Istio sidecar injector
-#      shell: "kubectl apply -f https://docs.projectcalico.org/v{{ platform.assets.calico.version }}/manifests/alp/istio-inject-configmap-{{ platform.assets.istio.version }}.yaml"
-
-#    - name: Adding Calico authorization services to the mesh
-#      shell: kubectl apply -f https://docs.projectcalico.org/v{{ platform.assets.calico.version }}/manifests/alp/istio-app-layer-policy.yaml
-
-    # Install the Helm package manager along with the Tiller Companion inside the Kubernetes cluster
+    # Install the Helm package manager
 
     - name: Download the Helm package manager
       get_url:

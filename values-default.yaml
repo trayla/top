@@ -44,7 +44,11 @@ platform:
 
   # Some settings for kubeadm which is called on the initial control plane node
   controlplane:
-    bindip: <bindip>
+    bindip: <bind-ip-address>
+
+  # Load balancer settings
+  public:
+    ip: <public-ip-address>
 
   # The console
   console:

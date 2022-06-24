@@ -13,29 +13,22 @@
   - name: Allow SSH access on the node
     community.general.ufw:
       rule: allow
-      name: OpenSSH
+      port: "{{ item }}"
+    loop:
+    - "22"
+    - "80"
+    - "443"
 
   - name: Apply firewall rules on the control plane node
     community.general.ufw:
       rule: allow
-      port: '{{ item }}'
       interface_in: '{{ platform.nodes.controlplanes[inventory_hostname].interfaces.int }}'
-    loop:
-    - '6443'
-    - '2379'
-    - '2380'
-    - '10250'
-    - '10257'
-    - '10259'
     when: inventory_hostname is match("controlplane*")
 
-  - name: Apply firewall rules on the vorker node
+  - name: Apply firewall rules on the worker node
     community.general.ufw:
       rule: allow
-      port: '{{ item }}'
       interface_in: '{{ platform.nodes.workers[inventory_hostname].interfaces.int }}'
-    loop:
-    - '10250'
     when: inventory_hostname is match("worker*")
 
   - name: Enable the firewall

@@ -55,7 +55,7 @@
     lineinfile:
       dest: /etc/hosts
       regexp: '.*{{ item }}$'
-      line: "{{ item.ip.int }} {{ item.hostname }}"
+      line: "{{ item.ip }} {{ item.hostname }}"
       state: present
     loop: "{{ platform.nodes.controlplanes.values() | list }}"
 
@@ -63,6 +63,6 @@
     lineinfile:
       dest: /etc/hosts
       regexp: '.*{{ item }}$'
-      line: "{{ item.ip.int }} {{ item.hostname }}"
+      line: "{{ item.ip }} {{ item.hostname }}"
       state: present
     loop: "{{ platform.nodes.workers.values() | list }}"

@@ -31,5 +31,5 @@
           - name: default
             protocol: layer2
             addresses:
-            - {{ platform.nodes.workers[0].ip.ext }}/32
+            - {{ platform.public.ip }}/32
       EOF

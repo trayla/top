@@ -59,7 +59,7 @@ class Inventory(object):
     count = 1
     for nodeName in platform_nodes_controlplanes.keys():
       jsHostvars[nodeName] = {
-        'ansible_host': platform_nodes_controlplanes[nodeName].get("ip").get("ext"),
+        'ansible_host': platform_nodes_controlplanes[nodeName].get("ip"),
         'ansible_fqcn': nodeName + "." + platform_name + "." + platform_domain,
         'ansible_user': 'root',
         'ansible_ssh_common_args': '-o StrictHostKeyChecking=no'
@@ -71,7 +71,7 @@ class Inventory(object):
     if platform_nodes_workers != None:
       for nodeName in platform_nodes_workers.keys():
         jsHostvars[nodeName] = {
-          'ansible_host': platform_nodes_workers[nodeName].get("ip").get("ext"),
+          'ansible_host': platform_nodes_workers[nodeName].get("ip"),
           'ansible_fqcn': nodeName + "." + platform_name + "." + platform_domain,
           'ansible_user': 'root',
           'ansible_ssh_common_args': '-o StrictHostKeyChecking=no'
