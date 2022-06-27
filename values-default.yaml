@@ -59,26 +59,14 @@ platform:
     controlplanes:
       controlplane01:
         hostname: controlplane01
-        ip:
-          ext: <external-ip-address>
-          int: <internal-ip-address>
-        interfaces:
-          int: <network-interface>
+        ip: <internal-ip-address>
     workers:
       worker01:
         hostname: worker01
-        ip:
-          ext: <external-ip-address>
-          int: <internal-ip-address>
-        interfaces:
-          int: <network-interface>
+        ip: <internal-ip-address>
       worker02:
         hostname: worker02
-        ip:
-          ext: <external-ip-address>
-          int: <internal-ip-address>
-        interfaces:
-          int: <network-interface>
+        ip: <internal-ip-address>
 
   # The storage settings
   storage:

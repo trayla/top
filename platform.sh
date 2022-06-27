@@ -8,7 +8,7 @@ GREEN=`tput setaf 2`
 NC=`tput sgr0`
 
 # Install Linux packages which are necessary to determine configuration parameters
-apt install python3-pip -y && pip3 install pyyaml
+sudo apt install python3-pip -y && pip3 install pyyaml
 
 function write_title() {
   echo
@@ -19,19 +19,19 @@ function write_title() {
 
 if [ "$EUID" -ne 0 ]
   then echo "Please run as root or with sudo"
-  exit
+  #exit
 fi
 
 if [ "$ACTION" == "prepare" ]; then
    # Install aptitude which is necessary for Ansible
-  apt install aptitude python3-pip software-properties-common -y
+  sudo apt install aptitude python3-pip software-properties-common -y
 
   # Install Python packages
   pip install pyyaml
 
   # Install Ansible
   add-apt-repository ppa:ansible/ansible && apt update
-  apt install ansible-core apache2-utils -y
+  sudo apt install ansible-core apache2-utils -y
 
   # Install the Ansible community collection
   ansible-galaxy collection install community.general

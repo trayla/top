@@ -8,34 +8,6 @@
     ansible.builtin.hostname:
       name: "{{ hostvars[inventory_hostname].ansible_fqcn }}"
 
-  # Define firewall rules to protect the node
-
-  - name: Allow SSH access on the node
-    community.general.ufw:
-      rule: allow
-      port: "{{ item }}"
-    loop:
-    - "22"
-    - "80"
-    - "443"
-
-  - name: Apply firewall rules on the control plane node
-    community.general.ufw:
-      rule: allow
-      interface_in: '{{ platform.nodes.controlplanes[inventory_hostname].interfaces.int }}'
-    when: inventory_hostname is match("controlplane*")
-
-  - name: Apply firewall rules on the worker node
-    community.general.ufw:
-      rule: allow
-      interface_in: '{{ platform.nodes.workers[inventory_hostname].interfaces.int }}'
-    when: inventory_hostname is match("worker*")
-
-  - name: Enable the firewall
-    community.general.ufw:
-      state: enabled
-      policy: deny
-
   # Enable IP forwarding
 
   - name: Enable IP forwarding
@@ -86,3 +58,19 @@
     apt:
       name: kubeadm={{ platform.assets.kubernetes.version }}
       state: present
+
+- hosts: console
+  become: yes
+  vars_files:
+  - /opt/mgmt/values-top.yaml
+  tasks:
+
+  - name: Let Kubernetes listen to the configured IP address on all conntrol planes nodes
+    shell: |
+      sed -i 's/KUBELET_CONFIG_ARGS=/KUBELET_CONFIG_ARGS=--node-ip={{ item.ip }} /' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+    loop: "{{ platform.nodes.controlplanes.values() | list }}"
+
+  - name: Let Kubernetes listen to the configured IP address on all worker nodes
+    shell: |
+      sed -i 's/KUBELET_CONFIG_ARGS=/KUBELET_CONFIG_ARGS=--node-ip={{ item.ip }} /' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+    loop: "{{ platform.nodes.workers.values() | list }}"
