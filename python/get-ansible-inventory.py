@@ -85,8 +85,10 @@ class Inventory(object):
         'children': [ 'kubernetes' ]
       },
       'kubernetes': {
-        'hosts': controlplanes,
-        'children': [ 'workers' ]
+        'children': [ 'controlplanes', 'workers' ]
+      },
+      'controlplanes': {
+        'hosts': controlplanes
       },
       'workers': {
         'hosts': workers
