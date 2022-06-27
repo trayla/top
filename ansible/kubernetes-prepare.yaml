@@ -63,7 +63,7 @@
     ansible.builtin.wait_for:
       timeout: 120
 
-- hosts: controlpanes
+- hosts: controlplanes
   become: yes
   vars_files:
   - /opt/mgmt/values-top.yaml
