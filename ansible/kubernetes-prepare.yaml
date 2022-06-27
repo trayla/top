@@ -63,7 +63,7 @@
     ansible.builtin.wait_for:
       timeout: 120
 
-- hosts: console
+- hosts: controlpanes
   become: yes
   vars_files:
   - /opt/mgmt/values-top.yaml
@@ -71,14 +71,22 @@
 
   - name: Let Kubernetes listen to the configured IP address on all control planes nodes
     shell: |
-      sed -i 's/KUBELET_CONFIG_ARGS=/KUBELET_CONFIG_ARGS=--node-ip={{ item.ip }} /' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+      sed -i 's/KUBELET_CONFIG_ARGS=/KUBELET_CONFIG_ARGS=--node-ip={{ platform.nodes.controlplanes[inventory_hostname].ip }} /' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
       systemctl daemon-reload
       systemctl restart kubelet
-    loop: "{{ platform.nodes.controlplanes.values() | list }}"
+
+- hosts: workers
+  become: yes
+  vars_files:
+  - /opt/mgmt/values-top.yaml
+  tasks:
 
   - name: Let Kubernetes listen to the configured IP address on all worker nodes
     shell: |
-      sed -i 's/KUBELET_CONFIG_ARGS=/KUBELET_CONFIG_ARGS=--node-ip={{ item.ip }} /' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+      sed -i 's/KUBELET_CONFIG_ARGS=/KUBELET_CONFIG_ARGS=--node-ip={{ platform.nodes.workers[inventory_hostname].ip }} /' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
       systemctl daemon-reload
       systemctl restart kubelet
-    loop: "{{ platform.nodes.workers.values() | list }}"
+
+  - name: Give kubelet some time to start and initialize
+    ansible.builtin.wait_for:
+      timeout: 120
