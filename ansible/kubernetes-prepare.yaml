@@ -68,9 +68,13 @@
   - name: Let Kubernetes listen to the configured IP address on all conntrol planes nodes
     shell: |
       sed -i 's/KUBELET_CONFIG_ARGS=/KUBELET_CONFIG_ARGS=--node-ip={{ item.ip }} /' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+      systemctl daemon-reload
+      systemctl restart kubelet
     loop: "{{ platform.nodes.controlplanes.values() | list }}"
 
   - name: Let Kubernetes listen to the configured IP address on all worker nodes
     shell: |
       sed -i 's/KUBELET_CONFIG_ARGS=/KUBELET_CONFIG_ARGS=--node-ip={{ item.ip }} /' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+      systemctl daemon-reload
+      systemctl restart kubelet
     loop: "{{ platform.nodes.workers.values() | list }}"
