@@ -17,11 +17,6 @@ function write_title() {
   echo
 }
 
-if [ "$EUID" -ne 0 ]
-  then echo "Please run as root or with sudo"
-  #exit
-fi
-
 if [ "$ACTION" == "prepare" ]; then
    # Install aptitude which is necessary for Ansible
   sudo apt install aptitude python3-pip software-properties-common -y
