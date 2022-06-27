@@ -27,10 +27,10 @@ if [ "$ACTION" == "prepare" ]; then
   sudo apt install aptitude python3-pip software-properties-common -y
 
   # Install Python packages
-  pip install pyyaml
+  sudo pip install pyyaml
 
   # Install Ansible
-  add-apt-repository ppa:ansible/ansible && apt update
+  sudo add-apt-repository ppa:ansible/ansible && sudo apt update
   sudo apt install ansible-core apache2-utils -y
 
   # Install the Ansible community collection
