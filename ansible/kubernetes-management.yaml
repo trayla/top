@@ -1,4 +1,4 @@
-- hosts: controlplane01
+- hosts: controlplane1
   become: yes
   vars_files:
   - /opt/mgmt/values-top.yaml
@@ -68,7 +68,7 @@
   - name: Store the Kubernetes connection configuration
     copy:
       dest: /root/.kube/config
-      content: "{{ hostvars['controlplane01'].kubernetes_connection_config }}"
+      content: "{{ hostvars['controlplane1'].kubernetes_connection_config }}"
       owner: root
       group: root
 

@@ -1,4 +1,4 @@
-- hosts: controlplane01
+- hosts: controlplane1
   become: yes
   gather_facts: false
   vars_files:
@@ -45,7 +45,7 @@
   tasks:
 
   - name: Join the nodes to the cluster
-    shell: "{{ hostvars['controlplane01'].join_command }} >> node_joined.txt"
+    shell: "{{ hostvars['controlplane1'].join_command }} >> node_joined.txt"
     args:
       chdir: $HOME
       creates: node_joined.txt
