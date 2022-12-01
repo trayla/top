@@ -15,10 +15,6 @@
         chdir: $HOME
         creates: pod_network_setup.txt
 
-    - name: Install the Calico command line interface
-      shell: |
-        kubectl create -f https://projectcalico.docs.tigera.io/archive/v{{ platform.assets.calico.version }}/manifests/calicoctl.yaml
-
     - name: Define a shell alias for calicoctl for root
       lineinfile:
         path=/root/.bashrc
