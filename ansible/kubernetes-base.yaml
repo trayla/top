@@ -9,8 +9,8 @@
     - name: Install Calico SDN
       become: yes
       shell: |
-        kubectl create -f https://projectcalico.docs.tigera.io/archive/v{{ platform.assets.calico.version }}/manifests/tigera-operator.yaml
-        kubectl create -f https://projectcalico.docs.tigera.io/archive/v{{ platform.assets.calico.version }}/manifests/custom-resources.yaml
+        kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v{{ platform.assets.calico.version }}/manifests/tigera-operator.yaml
+        kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v{{ platform.assets.calico.version }}/manifests/custom-resources.yaml
       args:
         chdir: $HOME
         creates: pod_network_setup.txt
