@@ -82,6 +82,6 @@
 
   - name: Install Stern
     get_url:
-      url: https://github.com/wercker/stern/releases/download/{{ platform.assets.stern.version }}/stern_linux_amd64
+      url: https://github.com/stern/stern/releases/download/v{{ platform.assets.stern.version }}/stern_{{ platform.assets.stern.version }}_linux_amd64.tar.gz
       dest: /usr/bin/stern
       mode: '0001'
