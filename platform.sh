@@ -22,7 +22,8 @@ if [ "$ACTION" == "prepare" ]; then
   sudo apt install aptitude python3-pip software-properties-common -y
 
   # Install Python packages
-  sudo pip install pyyaml
+  pip install pyyaml
+  pip install simplejson
 
   # Install Ansible
   sudo add-apt-repository ppa:ansible/ansible && sudo apt update
