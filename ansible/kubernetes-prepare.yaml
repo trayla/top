@@ -66,6 +66,10 @@
     apt:
       name: kubeadm={{ platform.assets.kubernetes.version }}
       state: present
+      
+  - name: Mark Kubernetes packages to be hold to prevent upgrades
+    shell: |
+      apt-mark hold kubelet kubeadm kubectl
 
   - name: Give kubelet some time to start and initialize
     ansible.builtin.wait_for:
