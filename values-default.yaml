@@ -42,10 +42,6 @@ platform:
   admin:
     password: <password>
 
-  # Some settings for kubeadm which is called on the initial control plane node
-  controlplane:
-    bindip: <bind-ip-address>
-
   # Load balancer settings
   public:
     ip: <public-ip-address>
