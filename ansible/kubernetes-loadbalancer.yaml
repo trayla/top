@@ -5,11 +5,17 @@
   tasks:
 
   # Install the MetalLB load balancer
+  
+  - name: Create the MetalLB namespace
+    shell: |
+      kubectl create ns metallb-system
 
   - name: Install the MetalLB load balancer
     shell: |
-      helm install metallb metallb/metallb
       helm repo add metallb https://metallb.github.io/metallb
+      helm install metallb metallb/metallb \
+        --namespace metallb-system \
+        --version {{ platform.assets.metallb.version }}
 
   - name: Apply the load balancer configuration
     shell: |
