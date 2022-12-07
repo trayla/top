@@ -35,15 +35,15 @@ if [ "$ACTION" == "install" ]; then
 
   # Add the nodes to the hosts file of each virtual machine
   write_title "Executing ansible/hosts.yaml"
-#  ansible-playbook -i $BASEDIR/python/get-ansible-inventory.py $BASEDIR/ansible/hosts.yaml -e allhosts=true
+  ansible-playbook -i $BASEDIR/python/get-ansible-inventory.py $BASEDIR/ansible/hosts.yaml -e allhosts=true
 
   # Prepare all Kubernetes nodes with a basic installation
   write_title "Executing ansible/kubernetes-prepare.yaml"
-#  ansible-playbook -i $BASEDIR/python/get-ansible-inventory.py $BASEDIR/ansible/kubernetes-prepare.yaml -e allhosts=true
+  ansible-playbook -i $BASEDIR/python/get-ansible-inventory.py $BASEDIR/ansible/kubernetes-prepare.yaml -e allhosts=true
 
   # Install the Kubernetes management
   write_title "Executing ansible/kubernetes-management.yaml"
-#  ansible-playbook -i $BASEDIR/python/get-ansible-inventory.py $BASEDIR/ansible/kubernetes-management.yaml
+  ansible-playbook -i $BASEDIR/python/get-ansible-inventory.py $BASEDIR/ansible/kubernetes-management.yaml
 
   # Install the worker nodes
   write_title "Executing ansible/kubernetes-nodes.yaml"

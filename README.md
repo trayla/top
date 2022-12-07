@@ -34,11 +34,6 @@ The Trayla Operations Platform provides a some to the outside world. In order to
 
 ## Usage
 
-Prepare your host with the following command. This is necessary only once while you can install and remove the platform from your host as much as you like.
-```ShellSession
-sudo /opt/mgmt/top/platform.sh prepare
-```
-
 Install the platform with the following command.
 ```ShellSession
 sudo /opt/mgmt/top/platform.sh install
