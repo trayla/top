@@ -4,18 +4,12 @@
   - /opt/mgmt/values-top.yaml
   tasks:
 
-  # Active strict ARP handling of the Kube Proxy
-
-  - name: Activate strict ARP handling of the Kube Proxy
-    shell: |
-      kubectl get configmap kube-proxy -n kube-system -o yaml | sed -e "s/strictARP: false/strictARP: true/" | kubectl apply -f - -n kube-system
-
   # Install the MetalLB load balancer
 
   - name: Install the MetalLB load balancer
     shell: |
-      kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v{{ platform.assets.metallb.version }}/manifests/namespace.yaml
-      kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v{{ platform.assets.metallb.version }}/manifests/metallb.yaml
+      helm install metallb metallb/metallb
+      helm repo add metallb https://metallb.github.io/metallb
 
   - name: Apply the load balancer configuration
     shell: |
