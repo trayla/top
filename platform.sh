@@ -17,8 +17,8 @@ function write_title() {
   echo
 }
 
-if [ "$ACTION" == "prepare" ]; then
-   # Install aptitude which is necessary for Ansible
+if [ "$ACTION" == "install" ]; then
+  # Install aptitude which is necessary for Ansible
   sudo apt install aptitude python3-pip software-properties-common -y
 
   # Install Python packages
@@ -33,22 +33,17 @@ if [ "$ACTION" == "prepare" ]; then
   ansible-galaxy collection install community.general
   ansible-galaxy collection install ansible.posix
 
-elif [ "$ACTION" == "install" ]; then
   # Add the nodes to the hosts file of each virtual machine
   write_title "Executing ansible/hosts.yaml"
-  ansible-playbook -i $BASEDIR/python/get-ansible-inventory.py $BASEDIR/ansible/hosts.yaml
-
-  # Install Docker on each virtual machine
-  write_title "Executing ansible/docker.yaml"
-  ansible-playbook -i $BASEDIR/python/get-ansible-inventory.py $BASEDIR/ansible/docker.yaml -e allhosts=true
+#  ansible-playbook -i $BASEDIR/python/get-ansible-inventory.py $BASEDIR/ansible/hosts.yaml -e allhosts=true
 
   # Prepare all Kubernetes nodes with a basic installation
   write_title "Executing ansible/kubernetes-prepare.yaml"
-  ansible-playbook -i $BASEDIR/python/get-ansible-inventory.py $BASEDIR/ansible/kubernetes-prepare.yaml -e allhosts=true
+#  ansible-playbook -i $BASEDIR/python/get-ansible-inventory.py $BASEDIR/ansible/kubernetes-prepare.yaml -e allhosts=true
 
   # Install the Kubernetes management
   write_title "Executing ansible/kubernetes-management.yaml"
-  ansible-playbook -i $BASEDIR/python/get-ansible-inventory.py $BASEDIR/ansible/kubernetes-management.yaml
+#  ansible-playbook -i $BASEDIR/python/get-ansible-inventory.py $BASEDIR/ansible/kubernetes-management.yaml
 
   # Install the worker nodes
   write_title "Executing ansible/kubernetes-nodes.yaml"
@@ -104,7 +99,6 @@ elif [ "$ACTION" == "addworker" ]; then
 else
   echo "Deploys a Kubernetes cluster"
   echo "Usage:"
-  echo "  platform.sh prepare"
   echo "  platform.sh install"
   echo "  platform.sh addworker <name_of_worker_node>"
 

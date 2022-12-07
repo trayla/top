@@ -5,20 +5,24 @@
   - /opt/mgmt/values-top.yaml
   tasks:
 
-  - name: Get join command
-    shell: kubeadm token create --print-join-command
-    register: join_command_raw
+  # Determine the K3S access token
 
-  - name: Set join command
+  - name: Determine the cluster authorization token
+    shell: |
+      cat /var/lib/rancher/k3s/server/node-token
+    register: k3s_token
+
+  - name: Store the K3s token
     set_fact:
-      join_command: "{{ join_command_raw.stdout_lines[0] }}"
+      k3s_token: "{{ k3s_token.stdout }}"
 
-# Install Longhorn requirements on each data node
-- hosts: kubernetes
+- hosts: workers
   become: yes
   vars_files:
   - /opt/mgmt/values-top.yaml
   tasks:
+
+  # Install Longhorn requirements on each data node
 
   - name: Create the longhorn data directory
     file:
@@ -38,20 +42,13 @@
       state: present
     when: allhosts == 'true' or inventory_hostname == host
 
-- hosts: workers
-  become: yes
-  vars_files:
-  - /opt/mgmt/values-top.yaml
-  tasks:
+  # Install K3S on the worker node
 
-  - name: Join the nodes to the cluster
-    shell: "{{ hostvars['controlplane1'].join_command }} >> node_joined.txt"
-    args:
-      chdir: $HOME
-      creates: node_joined.txt
-    when: allhosts == 'true' or inventory_hostname == host
+  - name: Install K3S on the worker node
+    shell: |
+      curl -sfL https://get.k3s.io | K3S_TOKEN="{{ hostvars['controlplane1'].k3s_token }}" K3S_URL="https://controlplane1:6443" INSTALL_K3S_VERSION="{{ platform.assets.k3s.version }}" sh -
 
-  - name: Add IP address of all control plane nodes to each Kubernetes node
+  - name: Add IP address of all control plane nodes to each worker node
     lineinfile:
       dest: /etc/hosts
       regexp: '.*{{ item }}$'
@@ -59,7 +56,7 @@
       state: present
     loop: "{{ platform.nodes.controlplanes.values() | list }}"
 
-  - name: Add IP address of all worker nodes to each Kubernetes node
+  - name: Add IP address of all worker nodes to each worker node
     lineinfile:
       dest: /etc/hosts
       regexp: '.*{{ item }}$'

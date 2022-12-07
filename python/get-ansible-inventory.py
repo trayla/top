@@ -8,7 +8,6 @@ import simplejson
 
 platform_domain = ''
 platform_name = ''
-platform_console = ''
 platform_nodes = ''
 platform_nodes_controlplanes = ''
 platform_nodes_workers = ''
@@ -17,12 +16,11 @@ with open("/opt/mgmt/values-top.yaml", 'r') as stream:
     platform = yaml.safe_load(stream).get("platform")
     platform_domain = platform.get("domain")
     platform_name = platform.get("name")
-    platform_console = platform.get("console")
     platform_nodes = platform.get("nodes")
     platform_nodes_controlplanes = platform_nodes.get("controlplanes")
     platform_nodes_workers = platform_nodes.get("workers")
   except yaml.YAMLError as exc:
-    platform_console = ''
+    platform_domain = ''
 
 class Inventory(object):
 
@@ -49,13 +47,6 @@ class Inventory(object):
     workers = []
     jsHostvars = {}
 
-    jsHostvars['console'] = {
-      'ansible_host': platform_console.get("ip"),
-      'ansible_fqcn': "console." + platform_name + "." + platform_domain,
-      'ansible_user': 'admin',
-      'ansible_ssh_common_args': '-o StrictHostKeyChecking=no'
-    }
-
     count = 1
     for nodeName in platform_nodes_controlplanes.keys():
       jsHostvars[nodeName] = {
@@ -81,7 +72,7 @@ class Inventory(object):
 
     return {
       'all': {
-        'hosts': [ 'console' ],
+        'hosts': [ ],
         'children': [ 'kubernetes' ]
       },
       'kubernetes': {

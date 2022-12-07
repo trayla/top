@@ -4,79 +4,11 @@
   - /opt/mgmt/values-top.yaml
   tasks:
 
-  # Initialize the Kubernetes cluster
+  # Initialize the K3S cluster
 
-  - name: Initialize the cluster
-    shell: kubeadm init --pod-network-cidr=192.168.0.0/16 --apiserver-advertise-address={{ platform.nodes.controlplanes.controlplane1.ip }} >> cluster_initialized.txt
-    args:
-      chdir: $HOME
-      creates: cluster_initialized.txt
-
-  - name: Determine the cluster connection configuration
-    shell: cat /etc/kubernetes/admin.conf
-    register: kubernetes_connection_config
-
-  - name: Store the cluster connection configuration
-    set_fact:
-      kubernetes_connection_config: "{{ kubernetes_connection_config.stdout }}"
-
-- hosts: console
-  become: yes
-  vars_files:
-  - /opt/mgmt/values-top.yaml
-  tasks:
-
-  # Install kubectl
-
-  - name: Install GPG
-    apt:
-      name: gnupg
-      state: present
-
-  - name: Install APT Transport HTTPS
-    apt:
-      name: apt-transport-https
-      state: present
-
-  - name: Add Kubernetes apt-key
-    apt_key:
-      url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
-      state: present
-
-  - name: Add Kubernetes APT repository
-    apt_repository:
-      repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
-      state: present
-      filename: 'kubernetes'
-
-  - name: Install kubectl
-    apt:
-      name: kubectl={{ platform.assets.kubernetes.version }}
-      state: present
-      force: yes
-
-  # Enable the Kubernetes connection
-
-  - name: Create the Kubernetes configuration directory
-    file:
-      path: /root/.kube
-      state: directory
-      mode: '0755'
-      owner: root
-      group: root
-
-  - name: Store the Kubernetes connection configuration
-    copy:
-      dest: /root/.kube/config
-      content: "{{ hostvars['controlplane1'].kubernetes_connection_config }}"
-      owner: root
-      group: root
-
-  # Enable autocompletion support for the Kubernetes command line tools
-
-  - name: Configure Kubernetes shell autocompletion
-    become: yes
-    shell: kubectl completion bash > /etc/bash_completion.d/kubectl
+  - name: Initialize the K3S cluster
+    shell: |
+      curl -sfL https://get.k3s.io | K3S_KUBECONFIG_MODE="644" K3S_TOKEN="token" INSTALL_K3S_EXEC="--flannel-backend=none --cluster-cidr=192.168.0.0/16 --disable-network-policy --disable=traefik" INSTALL_K3S_VERSION="{{ platform.assets.k3s.version }}" sh -s - server --cluster-init
 
   # Install Stern for enhanced log display
 

@@ -4,6 +4,8 @@
     - /opt/mgmt/values-top.yaml
   tasks:
 
+  # Add host entries fro each node
+
   - name: Add IP address of all control plane nodes to each Kubernetes node
     lineinfile:
       dest: /etc/hosts
@@ -19,3 +21,15 @@
       line: "{{ item.ip }} {{ item.hostname }}"
       state: present
     loop: "{{ platform.nodes.workers.values() | list }}"
+
+  # Disable Swap files because these are not supported on Docker hosts
+
+  - name: Remove swapfile from /etc/fstab
+    mount:
+      path: none
+      fstype: swap
+      state: absent
+    when: allhosts == 'true' or inventory_hostname == host
+
+  - name: Disable swap
+    command: swapoff -a

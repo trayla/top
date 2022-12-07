@@ -1,9 +1,9 @@
 platform:
 
   assets:
-    kubernetes:
-      # apt-cache madison kubeadm | head -n 1
-      version: 1.25.4-00
+    k3s:
+      # https://github.com/k3s-io/k3s/releases
+      version: v1.24.8+k3s1
     calico:
       # https://projectcalico.docs.tigera.io/release-notes/
       version: 3.24.5
@@ -45,10 +45,6 @@ platform:
   # Load balancer settings
   public:
     ip: <public-ip-address>
-
-  # The console
-  console:
-    ip: <ip-address>
 
   # The platform nodes
   nodes:

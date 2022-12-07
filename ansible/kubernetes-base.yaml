@@ -1,4 +1,4 @@
-- hosts: console
+- hosts: controlplane1
   become: yes
   vars_files:
     - /opt/mgmt/values-top.yaml
