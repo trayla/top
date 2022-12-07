@@ -9,7 +9,8 @@
   - name: Initialize the K3S cluster
     shell: |
       curl -sfL https://get.k3s.io | K3S_KUBECONFIG_MODE="644" K3S_TOKEN="token" INSTALL_K3S_EXEC="--flannel-backend=none --cluster-cidr=192.168.0.0/16 --disable-network-policy --disable=traefik" INSTALL_K3S_VERSION="{{ platform.assets.k3s.version }}" sh -s - server --cluster-init
-
+      kubectl config view --raw > ~/.kube/config
+      
   # Install Stern for enhanced log display
 
   - name: Install Stern
