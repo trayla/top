@@ -14,22 +14,18 @@
     shell: |
       helm repo add metallb https://metallb.github.io/metallb
       helm install metallb metallb/metallb \
-        --namespace metallb-system \
+        --namespace top \
         --version {{ platform.assets.metallb.version }}
 
   - name: Apply the load balancer configuration
     shell: |
       cat <<EOF | kubectl create -f -
-      apiVersion: v1
-      kind: ConfigMap
+      apiVersion: metallb.io/v1beta1
+      kind: IPAddressPool
       metadata:
-        namespace: metallb-system
-        name: config
-      data:
-        config: |
-          address-pools:
-          - name: default
-            protocol: layer2
-            addresses:
-            - {{ platform.public.ip }}/32
+        name: default
+        namespace: top
+      spec:
+        addresses:
+        - {{ platform.public.ip }}/32
       EOF
