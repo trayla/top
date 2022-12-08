@@ -5,10 +5,6 @@
   tasks:
 
   # Install the MetalLB load balancer
-  
-  - name: Create the MetalLB namespace
-    shell: |
-      kubectl create ns metallb-system
 
   - name: Install the MetalLB load balancer
     shell: |
@@ -16,16 +12,3 @@
       helm install metallb metallb/metallb \
         --namespace top \
         --version {{ platform.assets.metallb.version }}
-
-  - name: Apply the load balancer configuration
-    shell: |
-      cat <<EOF | kubectl create -f -
-      apiVersion: metallb.io/v1beta1
-      kind: IPAddressPool
-      metadata:
-        name: default
-        namespace: top
-      spec:
-        addresses:
-        - {{ platform.public.ip }}/32
-      EOF
