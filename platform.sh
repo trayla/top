@@ -26,10 +26,10 @@ if [ "$ACTION" == "install" ]; then
   pip install simplejson
 
   # Install Apache Utils to get htpasswd
-  apt install -y apache2-utils
+  sudo apt install -y apache2-utils
 
   # Install Ansible
-  apt install -y ansible-core
+  sudo apt install -y ansible-core
   ansible-galaxy collection install community.general
   ansible-galaxy collection install ansible.posix
 
