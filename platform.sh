@@ -33,10 +33,6 @@ if [ "$ACTION" == "install" ]; then
   ansible-galaxy collection install community.general
   ansible-galaxy collection install ansible.posix
 
-  # Install the Ansible community collection
-  ansible-galaxy collection install community.general
-  ansible-galaxy collection install ansible.posix
-
   # Add the nodes to the hosts file of each virtual machine
   write_title "Executing ansible/hosts.yaml"
   ansible-playbook -i $BASEDIR/python/get-ansible-inventory.py $BASEDIR/ansible/hosts.yaml -e allhosts=true
