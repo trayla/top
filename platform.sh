@@ -25,9 +25,13 @@ if [ "$ACTION" == "install" ]; then
   pip install pyyaml
   pip install simplejson
 
+  # Install Apache Utils to get htpasswd
+  apt install -y apache2-utils
+
   # Install Ansible
-  sudo add-apt-repository ppa:ansible/ansible && sudo apt update
-  sudo apt install ansible-core apache2-utils -y
+  apt install -y ansible-core
+  ansible-galaxy collection install community.general
+  ansible-galaxy collection install ansible.posix
 
   # Install the Ansible community collection
   ansible-galaxy collection install community.general
