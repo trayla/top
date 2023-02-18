@@ -11,7 +11,11 @@
       curl -sfL https://get.k3s.io | K3S_KUBECONFIG_MODE="644" K3S_TOKEN="token" INSTALL_K3S_EXEC="--flannel-backend=none --cluster-cidr=192.168.0.0/16 --disable-network-policy --disable=traefik" INSTALL_K3S_VERSION="{{ platform.assets.k3s.version }}" sh -s - server --cluster-init
       mkdir -p /root/.kube && kubectl config view --raw > ~/.kube/config
       
-  # Install Stern for enhanced log display
+- hosts: controlplane1
+  become: no
+  vars_files:
+  - /opt/mgmt/values-top.yaml
+  tasks:
 
   - name: Install Krew, the Kubectl package manager
     shell: |
@@ -27,7 +31,7 @@
 
   - name: Modify the bashrc to include Krew
     blockinfile:
-      dest: "/home/admin/.bashrc"
+      dest: "~/.bashrc"
       block: |
         export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
         export KUBE+EDITOR=nano
