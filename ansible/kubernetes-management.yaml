@@ -35,3 +35,6 @@
       insertbefore: BOF
       create: yes
  
+  - name: Install stern, a log aggregator for Kubectl
+    shell: |
+      kubectl krew install stern
