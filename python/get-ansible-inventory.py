@@ -53,7 +53,8 @@ class Inventory(object):
         'ansible_host': platform_nodes_controlplanes[nodeName].get("ip"),
         'ansible_fqcn': nodeName + "." + platform_name + "." + platform_domain,
         'ansible_user': 'admin',
-        'ansible_ssh_common_args': '-o StrictHostKeyChecking=no'
+        'ansible_ssh_common_args': '-o StrictHostKeyChecking=no',
+        'ansible_ssh_timeout': '60'
       }
       controlplanes.append(nodeName)
       count = count + 1
@@ -65,7 +66,8 @@ class Inventory(object):
           'ansible_host': platform_nodes_workers[nodeName].get("ip"),
           'ansible_fqcn': nodeName + "." + platform_name + "." + platform_domain,
           'ansible_user': 'admin',
-          'ansible_ssh_common_args': '-o StrictHostKeyChecking=no'
+          'ansible_ssh_common_args': '-o StrictHostKeyChecking=no',
+          'ansible_ssh_timeout': '60'
         }
         workers.append(nodeName)
         count = count + 1
