@@ -33,12 +33,15 @@
 
     - name: Download the Helm package manager
       get_url:
-        url: https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
-        dest: /tmp/get-helm.sh
+        url: https://get.helm.sh/helm-v{{ platform.assets.helm.version }}-linux-amd64.tar.gz
+        dest: /tmp/helm-linux-amd64.tar.gz
         mode: '0700'
 
-    - name: Install Helm
-      shell: /tmp/get-helm.sh
+    - name: Unpack the Helm distribution
+      shell: tar -zxvf /tmp/helm-linux-amd64.tar.gz -C /tmp
+
+    - name: Extract the Helm binary
+      shell: mv /tmp/linux-amd64/helm /usr/local/bin/helm
 
     - name: Install the Stable Helm repository
       shell: |

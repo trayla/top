@@ -4,6 +4,9 @@ platform:
     k3s:
       # https://github.com/k3s-io/k3s/releases
       version: v1.24.8+k3s1
+    helm:
+      # https://github.com/helm/helm/releases
+      version: 3.11.1
     calico:
       # https://projectcalico.docs.tigera.io/release-notes/
       version: 3.24.5
