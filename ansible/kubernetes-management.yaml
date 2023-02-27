@@ -46,7 +46,7 @@
       dest: "~/.bashrc"
       block: |
         export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
-        export KUBE+EDITOR=nano
+        export KUBE_EDITOR=nano
       marker: '# {mark} ANSIBLE MANAGED BLOCK'
       insertbefore: BOF
       create: yes

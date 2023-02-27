@@ -55,13 +55,16 @@ platform:
       controlplane1:
         hostname: controlplane1
         ip: <internal-ip-address>
+        user: admin
     workers:
       worker01:
         hostname: worker01
         ip: <internal-ip-address>
+        user: admin
       worker02:
         hostname: worker02
         ip: <internal-ip-address>
+        user: admin
 
   # The storage settings
   storage:
