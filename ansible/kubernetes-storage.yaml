@@ -10,19 +10,16 @@
     file:
       path: /var/lib/longhorn
       state: directory
-    when: allhosts == 'true' or inventory_hostname == host
 
   - name: Install iSCSI packages for Longhorn
     apt:
       name: open-iscsi
       state: present
-    when: allhosts == 'true' or inventory_hostname == host
 
   - name: Install NFS tools for Longhorn
     apt:
       name: nfs-common
       state: present
-    when: allhosts == 'true' or inventory_hostname == host
 
 - hosts: controlplane1
   become: yes
