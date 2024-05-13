@@ -6,7 +6,7 @@ Note: The master branch may be in an unstable or even broken state during develo
 
 ### Hardware requirements
 
-- At least one running machine with a plain Ubuntu 20.04 Server installation and root access. Virtual machines are supported as well as bare metal installations.
+- At least one running machine with a plain Ubuntu 24.04 Server installation and root access. Virtual machines are supported as well as bare metal installations.
 - Minimum 8 GB RAM on each node
 - Minimum 100 GB storage
 
