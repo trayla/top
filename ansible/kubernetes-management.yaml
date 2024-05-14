@@ -23,11 +23,23 @@
     shell: |
       mkdir -p /root/.kube && kubectl config view --raw > ~/.kube/config
 
+  - name: Enable shell completion for the root user
+    shell: |
+      kubectl completion bash | sudo tee /etc/bash_completion.d/kubectl > /dev/null
+      k3s completion bash | sudo tee /etc/bash_completion.d/k3s > /dev/null
+      source ~/.bashrc
+
 - hosts: controlplane1
   become: no
   vars_files:
   - /opt/mgmt/values-top.yaml
   tasks:
+
+  - name: Enable shell completion for non-root user
+    shell: |
+      kubectl completion bash | sudo tee /etc/bash_completion.d/kubectl > /dev/null
+      k3s completion bash | sudo tee /etc/bash_completion.d/k3s > /dev/null
+      source ~/.bashrc
 
   - name: Install Krew, the Kubectl package manager
     shell: |
