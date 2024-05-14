@@ -7,6 +7,9 @@ RED=`tput setaf 1`
 GREEN=`tput setaf 2`
 NC=`tput sgr0`
 
+# Update the system
+sudo apt update && sudo apt upgrade -y
+
 # Install Linux packages which are necessary to determine configuration parameters
 sudo apt install python3-pip -y && pip3 install pyyaml
 
