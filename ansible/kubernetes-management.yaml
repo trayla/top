@@ -34,11 +34,6 @@
   - /opt/mgmt/values-top.yaml
   tasks:
 
-  - name: Enable shell completion for non-root user
-    shell: |
-      kubectl completion bash | sudo tee /etc/bash_completion.d/kubectl > /dev/null
-      k3s completion bash | sudo tee /etc/bash_completion.d/k3s > /dev/null
-
   - name: Install Krew, the Kubectl package manager
     shell: |
       (
@@ -64,3 +59,50 @@
   - name: Install stern, a log aggregator for Kubectl
     shell: |
       kubectl krew install stern
+
+  # Ensure bash-completion is installed (Debian/Ubuntu; change for your distro)
+  - name: Install bash-completion
+    apt:
+      name: bash-completion
+      state: present
+    become: yes
+
+  # System-wide kubectl completion file (you already have it; this keeps it idempotent)
+  - name: Ensure kubectl completion exists system-wide
+    shell: kubectl completion bash | tee /etc/bash_completion.d/kubectl >/dev/null
+    args:
+      executable: /bin/bash
+      creates: /etc/bash_completion.d/kubectl
+    become: yes
+
+  # Per-user shell init
+  - name: Ensure ~/.bashrc wires bash-completion + kubectl + alias k
+    blockinfile:
+      dest: "{{ ansible_env.HOME }}/.bashrc"
+      create: yes
+      insertbefore: BOF
+      marker: "# {mark} ANSIBLE MANAGED K8S BLOCK"
+      block: |
+        # Load bash-completion
+        if [ -f /usr/share/bash-completion/bash_completion ]; then
+          . /usr/share/bash-completion/bash_completion
+        elif [ -f /etc/bash_completion ]; then
+          . /etc/bash_completion
+        fi
+
+        # kubectl completion (prefer system file; fallback to dynamic)
+        if command -v kubectl >/dev/null 2>&1; then
+          if [ -f /etc/bash_completion.d/kubectl ]; then
+            . /etc/bash_completion.d/kubectl
+          else
+            source <(kubectl completion bash)
+          fi
+          alias k=kubectl
+          complete -o default -F __start_kubectl k
+        fi
+
+  - name: Ensure login shells read ~/.bashrc
+    lineinfile:
+      path: "{{ ansible_env.HOME }}/.bash_profile"
+      line: '[ -f ~/.bashrc ] && . ~/.bashrc'
+      create: yes
