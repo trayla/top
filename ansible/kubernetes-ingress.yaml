@@ -30,23 +30,21 @@
   - name: Disable the automatic validation feature on the Cert Manager namespace
     shell: kubectl label namespace certmgr certmanager.k8s.io/disable-validation="true"
 
-  - name: Add the Jetstack Helm repository
-    shell: |
-      helm repo add jetstack https://charts.jetstack.io
-      helm repo update
-
-  - name: Install the Cert Manager via it's Helm package
-    shell: |
-      helm install certmanager jetstack/cert-manager \
-        --namespace certmgr \
-        --version v{{ platform.assets.certmanager.version }} \
-        --set installCRDs=true \
-        --set prometheus.enabled=true \
-        --set prometheus.servicemonitor.enabled=true \
-        --set ingressShim.defaultIssuerKind=ClusterIssuer,ingressShim.defaultIssuerName=letsencrypt-{{ platform.certissuer.default }},ingressShim.defaultACMEChallengeType=http01
+  - name: Install cert-manager
+    shell: >
+      helm upgrade --install cert-manager oci://quay.io/jetstack/charts/cert-manager
+      --namespace cert-manager --create-namespace
+      --version v1.18.2
+      --set installCRDs=true
+      --set prometheus.enabled=true
+      --set prometheus.servicemonitor.enabled=true
+      --set ingressShim.defaultIssuerKind=ClusterIssuer
+      --set ingressShim.defaultIssuerName=letsencrypt-{{ platform.certissuer.default }}
+    args:
+      executable: /bin/bash
 
   - name: Wait for the Cert Manager to come up
-    shell: kubectl get pods --namespace certmgr
+    shell: kubectl get pods --namespace cert-manager
     register: result
     until: (result.stdout | regex_findall("Running") | length) == 3
     retries: 100
