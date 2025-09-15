@@ -3,34 +3,34 @@ platform:
   assets:
     k3s:
       # https://github.com/k3s-io/k3s/releases
-      version: v1.30.1+k3s1
+      version: v1.33.4+k3s1
     helm:
       # https://github.com/helm/helm/releases
-      version: 3.15.2
+      version: 3.19.0
     calico:
       # https://projectcalico.docs.tigera.io/release-notes/
-      version: 3.28.0
+      version: v3.30.3
     istio:
       # https://istio.io/latest/docs/releases/supported-releases/
-      version: 1.22
+      version: 1.27
     nginx:
       # helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx && helm repo update && helm search repo ingress-nginx/ingress-nginx --versions | head -n 2
-      version: 4.10.1
+      version: 4.13.2
     certmanager:
       # https://cert-manager.io/docs/release-notes/
-      version: 1.15.0
+      version: 1.18.2
     prometheus:
       # https://github.com/prometheus-community/helm-charts/releases
-      version: 60.4.0
+      version: 77.6.2
     longhorn:
       # https://github.com/longhorn/longhorn/releases
-      version: 1.6.2
+      version: 1.9.1
     metallb:
       # https://metallb.universe.tf/release-notes/
-      version: 0.14.5
+      version: 0.15.2
     stern:
       # https://github.com/stern/stern/releases
-      version: 1.30.0
+      version: 1.33.0
 
   # Your domain, the platform should be reachable through
   domain: <domain-name>
