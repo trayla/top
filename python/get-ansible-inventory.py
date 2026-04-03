@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/opt/mgmt/venvs/platform/bin/python
 
 import os
 import sys
