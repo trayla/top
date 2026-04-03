@@ -78,7 +78,7 @@
   # Per-user shell init
   - name: Ensure ~/.bashrc wires bash-completion + kubectl + alias k
     blockinfile:
-      dest: "{{ ansible_env.HOME }}/.bashrc"
+      dest: "{{ ansible_user_dir }}/.bashrc"
       create: yes
       insertbefore: BOF
       marker: "# {mark} ANSIBLE MANAGED K8S BLOCK"
@@ -103,6 +103,6 @@
 
   - name: Ensure login shells read ~/.bashrc
     lineinfile:
-      path: "{{ ansible_env.HOME }}/.bash_profile"
+      path: "{{ ansible_user_dir }}/.bash_profile"
       line: '[ -f ~/.bashrc ] && . ~/.bashrc'
       create: yes

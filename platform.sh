@@ -10,8 +10,21 @@ NC=`tput sgr0`
 # Update the system
 sudo apt update && sudo apt upgrade -y
 
-# Install Linux packages which are necessary to determine configuration parameters
-sudo apt install python3-pip -y && pip3 install pyyaml
+PLATFORM_VENV=/opt/mgmt/venvs/platform
+
+sudo apt install -y python3-venv python3-full
+
+if [ ! -d "$PLATFORM_VENV" ]; then
+  python3 -m venv $PLATFORM_VENV
+  $PLATFORM_VENV/bin/pip install --upgrade pip
+fi
+
+$PLATFORM_VENV/bin/pip install \
+  pyyaml \
+  simplejson \
+  ansible
+
+export ANSIBLE_PYTHON_INTERPRETER=$PLATFORM_VENV/bin/python
 
 function write_title() {
   echo
@@ -22,11 +35,7 @@ function write_title() {
 
 if [ "$ACTION" == "install" ]; then
   # Install aptitude which is necessary for Ansible
-  sudo apt install aptitude python3-pip software-properties-common -y
-
-  # Install Python packages
-  pip install pyyaml
-  pip install simplejson
+  sudo apt install aptitude software-properties-common -y
 
   # Install Apache Utils to get htpasswd
   sudo apt install -y apache2-utils
