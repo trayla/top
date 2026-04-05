@@ -54,7 +54,7 @@
           requests:
             storage: 30Gi
         accessModes:
-          - ReadWriteMany
+          - ReadWriteOnce
         storageClassName: default
       EOF
 
